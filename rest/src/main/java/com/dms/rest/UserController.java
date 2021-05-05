@@ -7,6 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/users")
@@ -27,5 +28,10 @@ public class UserController {
     @GetMapping("/get-all")
     public List<User> findAll() {
         return userRepository.findAll();
+    }
+
+    @GetMapping("/get")
+    public Optional<User> findById(@RequestParam Long id) {
+        return userRepository.findById(id);
     }
 }
