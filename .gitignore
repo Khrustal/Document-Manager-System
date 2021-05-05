@@ -4,3 +4,4 @@
 *.md
 */mvnw
 */mvnw.cmd
+/lib/
