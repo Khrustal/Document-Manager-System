@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns:text-align="http://www.w3.org/1999/xhtml">
 <head>
     <meta charset="UTF-8">
     <title>Home</title>
@@ -7,6 +7,8 @@
 <body>
 
 <h2>Home</h2>
+<p>Welcome, <span th:text="${message}"/>!</p>
+<a href="/logout">Logout</a>
 <p>Moderation List</p>
 <p>File System</p>
 
