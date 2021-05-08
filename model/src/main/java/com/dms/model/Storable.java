@@ -20,8 +20,8 @@ public class Storable {
 
     private String name;
 
-//    @Enumerated(EnumType.STRING)
-//    private Type type;
+    @Enumerated(EnumType.STRING)
+    private Type type;
 
     @Column(name = "free_access")
     private Boolean freeAccess;
@@ -32,14 +32,19 @@ public class Storable {
     @Column(name = "creation_dt")
     private Timestamp creationDT;
 
-    @OneToMany
-    private List<User> readers;
+    public Storable(Long id, Directory parent, User author, String name, Type type, Boolean freeAccess, Status status, Timestamp creationDT) {
+        this.id = id;
+        this.parent = parent;
+        this.author = author;
+        this.name = name;
+        this.type = type;
+        this.freeAccess = freeAccess;
+        this.status = status;
+        this.creationDT = creationDT;
+    }
 
-    @OneToMany
-    private List<User> editors;
-
-    @OneToMany
-    private List<User> moderators;
+    public Storable() {
+    }
 
     public Long getId() {
         return id;
@@ -81,6 +86,10 @@ public class Storable {
         return status;
     }
 
+    public Type getType() {
+        return type;
+    }
+
     public void setStatus(Status status) {
         this.status = status;
     }
@@ -91,29 +100,5 @@ public class Storable {
 
     public void setCreationDT(Timestamp creationDT) {
         this.creationDT = creationDT;
-    }
-
-    public List<User> getReaders() {
-        return readers;
-    }
-
-    public void setReaders(List<User> readers) {
-        this.readers = readers;
-    }
-
-    public List<User> getEditors() {
-        return editors;
-    }
-
-    public void setEditors(List<User> editors) {
-        this.editors = editors;
-    }
-
-    public List<User> getModerators() {
-        return moderators;
-    }
-
-    public void setModerators(List<User> moderators) {
-        this.moderators = moderators;
     }
 }

@@ -1,6 +1,7 @@
 package com.dms.model;
 
 import javax.persistence.*;
+import java.sql.Timestamp;
 
 @Entity
 public class Document extends Storable{
@@ -15,4 +16,12 @@ public class Document extends Storable{
 
     @ManyToOne
     private Document ancestor;
+
+    public Document(Long id, Directory parent, User author, String name, Type type, Boolean freeAccess, Status status, Timestamp creationDT) {
+        super(id, parent, author, name, type, freeAccess, status, creationDT);
+    }
+
+    public Document() {
+
+    }
 }

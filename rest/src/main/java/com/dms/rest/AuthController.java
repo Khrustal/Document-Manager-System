@@ -1,6 +1,5 @@
 package com.dms.rest;
 
-import com.dms.model.User;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;

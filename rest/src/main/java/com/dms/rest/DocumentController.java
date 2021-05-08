@@ -1,19 +1,16 @@
 package com.dms.rest;
 
-import com.dms.dao.StorableRepository;
-import com.dms.model.Storable;
+import com.dms.dao.DocumentRepository;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
-import java.util.List;
 
 @RestController
 @RequestMapping("/doc")
 public class DocumentController {
 
-    StorableRepository storableRepository;
+    DocumentRepository documentRepository;
 
-    public DocumentController(StorableRepository storableRepository) {
-        this.storableRepository = storableRepository;
+    public DocumentController(DocumentRepository documentRepository) {
+        this.documentRepository = documentRepository;
     }
 }
