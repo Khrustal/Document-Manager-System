@@ -6,7 +6,7 @@ import java.util.List;
 
 
 @Entity
-@Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
+@Inheritance(strategy = InheritanceType.JOINED)
 public class Storable {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)

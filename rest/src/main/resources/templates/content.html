@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Content</title>
+</head>
+<body>
+
+<table>
+  <thead>
+  <tr>
+    <th> * </th>
+    <th> Name </th>
+    <th> Author </th>
+    <th> Type </th>
+    <th> Created </th>
+    <th> Status </th>
+  </tr>
+  </thead>
+  <tbody>
+  <tr th:each="content : ${contents}">
+    <td><span> View </span></td>
+    <td><span th:text="${content.name}"> Title </span></td>
+    <td><span th:text="${content.author.username}"> Title </span></td>
+    <td><span th:text="${content.type}"> Title </span></td>
+    <td><span th:text="${content.creationDT}"> Title </span></td>
+    <td><span th:text="${content.status}"> Title </span></td>
+  </tr>
+  </tbody>
+</table>
+
+</body>
+</html>
