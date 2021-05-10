@@ -1,23 +1,21 @@
 package com.dms.rest;
 
+import com.dms.dto.CreateDirDto;
 import com.dms.model.Directory;
 import com.dms.model.Status;
 import com.dms.model.Type;
 import com.dms.model.User;
 import com.dms.services.DirectoryService;
 import com.dms.services.UserService;
-import com.fasterxml.jackson.databind.annotation.JsonTypeResolver;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 
 import java.sql.Timestamp;
-import java.util.List;
 import java.util.Optional;
 
 @Controller
@@ -33,31 +31,31 @@ public class DirectoryController {
     }
 
     @GetMapping("/create")
-    public String createForm(Model model) {
+    public String createForm(@RequestParam(required = false) Long id, Model model) {
+        model.addAttribute("parentId", id);
+        model.addAttribute("directory", new Directory());
         return "create_dir";
     }
 
     @PostMapping("/create")
-    public ResponseEntity<?> create(Model model) {
-        Optional<User> user = userService.find(1L);
-        Directory directory = new Directory(null, null, user.get(), "example", Type.DIRECTORY,
-                true, Status.CURRENT, new Timestamp(System.currentTimeMillis()));
+    public String create(@RequestParam(required = false) Long id, @ModelAttribute CreateDirDto dto, Model model) {
+        UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        User user = userService.find(userDetails.getUsername()).get();
+        Directory parent = null;
+        if(id != null) {
+            parent = directoryService.find(id).get();
+        }
+        Directory directory = new Directory(null, parent, user, dto.getName(), Type.DIRECTORY,
+                dto.getFreeAccess(), Status.CURRENT, new Timestamp(System.currentTimeMillis()));
         directoryService.create(directory);
-        return new ResponseEntity<>(HttpStatus.OK);
+        return "home";
     }
 
     @GetMapping("/content")
     public String getContent(@RequestParam(required = false) Long id , Model model) {
         model.addAttribute("contents", directoryService.getContent(id));
+        model.addAttribute("type", Type.values());
         return "content";
     }
-
-//    @GetMapping("/get-all")
-//    public String getAll(Model model) {
-//        model.addAttribute("book", directoryService.findAll());
-//        List<Directory> dirs = directoryService.findAll();
-//        System.out.println("...");
-//        return "get_all";
-//    }
 
 }
