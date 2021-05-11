@@ -33,7 +33,7 @@
     <td><span th:text="${content.name}"> Title </span></td>
     <td><span th:text="${content.author.username}"> Title </span></td>
     <td><span th:text="${content.type}"> Title </span></td>
-    <td><span th:text="${content.creationDT}"> Title </span></td>
+    <td><span th:text="${#dates.format(content.creationDT, 'dd-MMM-yyyy HH:mm')}"> Title </span></td>
     <td><span th:text="${content.status}"> Title </span></td>
 
     <td>

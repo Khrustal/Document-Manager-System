@@ -7,7 +7,36 @@
 <body>
 
 <p>Return to <a href="/">homepage</a></p>
-Create document
+<h1>Create Document</h1>
+<form th:action="@{create(id=${parentId})}" th:object="${document}" method="post">
+    <label>Name:
+        <input type="text" th:field="*{name}"/>
+    </label><br/>
 
+    <label>Free Access:
+        <input type="checkbox" th:field="*{freeAccess}" />
+    </label><br/>
+
+
+    <label>Description:
+        <input type="text" th:field="*{description}" />
+    </label><br/>
+
+
+    <label>Priority:
+        <select name="priority">
+            <option th:each="val : ${T(com.dms.model.Priority).values()}"
+                    th:value="${val}" th:text="${val}"></option>
+        </select>
+    </label><br/>
+
+    <label>DocType:
+        <select name="docType">
+            <option th:each="val : ${docTypes}"
+                    th:value="${val.getId()}" th:text="${val.getName()}"></option>
+        </select>
+    </label><br/>
+    <p><input type="submit" value="Submit"/></p>
+</form>
 </body>
 </html>
