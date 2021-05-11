@@ -71,6 +71,7 @@ public class DocumentController {
     public String view(@RequestParam Long id, Model model) {
         Document document = documentService.find(id);
         model.addAttribute("document", document);
+        model.addAttribute("files", document.getFiles());
         return "doc";
     }
 

@@ -2,6 +2,7 @@ package com.dms.model;
 
 import javax.persistence.*;
 import java.sql.Timestamp;
+import java.util.List;
 
 @Entity
 public class Document extends Storable{
@@ -16,6 +17,9 @@ public class Document extends Storable{
 
     @ManyToOne
     private Document ancestor;
+
+    @OneToMany
+    private List<DocFile> files;
 
     public Document(Long id, Directory parent, User author, String name, Type type, Boolean freeAccess, Status status,
                     Timestamp creationDT, String description, Priority priority, DocType docType, Document ancestor) {
@@ -60,5 +64,17 @@ public class Document extends Storable{
 
     public void setAncestor(Document ancestor) {
         this.ancestor = ancestor;
+    }
+
+    public List<DocFile> getFiles() {
+        return files;
+    }
+
+    public void addFile(DocFile file) {
+        this.files.add(file);
+    }
+
+    public void removeFile(DocFile docFile) {
+        this.files.remove(docFile);
     }
 }

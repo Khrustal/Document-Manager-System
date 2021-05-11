@@ -22,8 +22,8 @@ public class DocTypeServiceImpl implements DocTypeService{
     }
 
     @Override
-    public Optional<DocType> find(Long id) {
-        return docTypeRepository.findById(id);
+    public DocType find(Long id) {
+        return docTypeRepository.findById(id).get();
     }
 
     @Override

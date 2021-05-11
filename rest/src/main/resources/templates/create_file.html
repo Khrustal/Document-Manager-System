@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Create file</title>
+</head>
+<body>
+
+<p>Return to <a href="/">homepage</a></p>
+<h1>Create File</h1>
+<form th:action="@{create(id=${param.id})}" th:object="${file}" method="post">
+
+  <label>Name:
+    <input type="text" th:field="*{name}"/>
+  </label><br/>
+
+  <label>Type:
+    <input type="text" th:field="*{type}"/>
+  </label><br/>
+
+  <label>Path:
+    <input type="text" th:field="*{path}"/>
+  </label><br/>
+
+  <p><input type="submit" value="Submit"/></p>
+</form>
+
+</body>
+</html>

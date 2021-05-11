@@ -31,4 +31,9 @@ public class DocumentServiceImpl implements DocumentService{
     public void delete(Long id) {
         documentRepository.deleteById(id);
     }
+
+    @Override
+    public Document fundByFileId(Long id) {
+        return documentRepository.findByFilesId(id);
+    }
 }

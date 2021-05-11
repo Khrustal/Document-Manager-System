@@ -15,6 +15,15 @@ public class DocFile {
 
     private String path;
 
+    public DocFile(String name, String type, String path) {
+        this.name = name;
+        this.type = type;
+        this.path = path;
+    }
+
+    public DocFile() {
+    }
+
     public Long getId() {
         return id;
     }

@@ -7,4 +7,5 @@ public interface DocumentService {
     public Document find(Long id);
     public void update(Long id, Document newDoc);
     public void delete(Long id);
+    public Document fundByFileId(Long id);
 }
