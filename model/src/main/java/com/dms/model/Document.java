@@ -29,4 +29,36 @@ public class Document extends Storable{
     public Document() {
 
     }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public Priority getPriority() {
+        return priority;
+    }
+
+    public DocType getDocType() {
+        return docType;
+    }
+
+    public Document getAncestor() {
+        return ancestor;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public void setPriority(Priority priority) {
+        this.priority = priority;
+    }
+
+    public void setDocType(DocType docType) {
+        this.docType = docType;
+    }
+
+    public void setAncestor(Document ancestor) {
+        this.ancestor = ancestor;
+    }
 }

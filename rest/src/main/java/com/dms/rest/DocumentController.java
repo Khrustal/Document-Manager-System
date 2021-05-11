@@ -37,8 +37,7 @@ public class DocumentController {
     }
 
     @GetMapping("/create")
-    public String createForm(@RequestParam(required = false) Long id, Model model) {
-        model.addAttribute("parentId", id);
+    public String createForm(Model model) {
         model.addAttribute("document", new CreateDocDto());
         List<DocType> docTypeList = docTypeService.findAll();
         model.addAttribute("docTypes", docTypeList);
@@ -46,16 +45,25 @@ public class DocumentController {
     }
 
     @PostMapping("/create")
-    public String create(@RequestParam(required = false) Long id, @ModelAttribute CreateDocDto dto, Model model) {
+    public String create(@RequestParam(required = false) Long dir, @RequestParam(required = false) Long doc,
+                         @ModelAttribute CreateDocDto dto, Model model) {
         UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         User user = userService.find(userDetails.getUsername()).get();
         Directory parent = null;
-        if(id != null) {
-            parent = directoryService.find(id).get();
+        if(dir != null) {
+            parent = directoryService.find(dir).get();
         }
         Document document = new Document(null, parent, user, dto.getName(), Type.DOCUMENT,
                 dto.getFreeAccess(), Status.CURRENT, new Timestamp(System.currentTimeMillis()),
                 dto.getDescription(), dto.getPriority(), dto.getDocType(), null);
+
+        //If ancestor == null => New Doc, ancestor = this, else => Version, ancestor = firstVersion
+        Document ancestor = document;
+        if(doc != null) {
+            Document prev = documentService.find(doc);
+            ancestor = prev.getAncestor();
+        }
+        document.setAncestor(ancestor);
         documentService.create(document);
         return "home";
     }

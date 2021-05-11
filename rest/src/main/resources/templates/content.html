@@ -15,7 +15,7 @@
 
 <p>Return to <a href="/">Homepage</a></p>
 <p>Create <a th:href="@{/dir/create(id=${param.id})}">Directory</a></p>
-<p>Create <a th:href="@{/doc/create(id=${param.id})}">Document</a></p>
+<p>Create <a th:href="@{/doc/create(dir=${param.id})}">Document</a></p>
 <table>
   <thead>
   <tr>
@@ -39,7 +39,7 @@
     <td>
       <div th:switch="${content.type}">
         <p th:case="${T(com.dms.model.Type).DOCUMENT}">
-          View Doc
+          <a th:href="@{/doc/create(doc=${content.id}, dir=${param.id})}">Create version</a>
         </p>
         <p th:case="${T(com.dms.model.Type).DIRECTORY}">
           <a th:href="@{content(id=${content.id})}">View</a>

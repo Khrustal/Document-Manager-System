@@ -20,16 +20,15 @@ public class DocumentServiceImpl implements DocumentService{
 
     @Override
     public Document find(Long id) {
-        return null;
+        return documentRepository.findById(id).get();
     }
 
     @Override
     public void update(Long id, Document newDoc) {
-
     }
 
     @Override
     public void delete(Long id) {
-
+        documentRepository.deleteById(id);
     }
 }
