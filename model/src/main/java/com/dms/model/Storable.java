@@ -2,6 +2,7 @@ package com.dms.model;
 
 import javax.persistence.*;
 import java.sql.Timestamp;
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -31,6 +32,15 @@ public class Storable {
 
     @Column(name = "creation_dt")
     private Timestamp creationDT;
+
+    @ManyToMany
+    private final List<User> readers = new ArrayList<>();
+
+    @ManyToMany
+    private final List<User> editors = new ArrayList<>();
+
+    @ManyToMany
+    private final List<User> moderators = new ArrayList<>();
 
     public Storable(Long id, Directory parent, User author, String name, Type type, Boolean freeAccess, Status status, Timestamp creationDT) {
         this.id = id;
@@ -100,5 +110,29 @@ public class Storable {
 
     public void setCreationDT(Timestamp creationDT) {
         this.creationDT = creationDT;
+    }
+
+    public List<User> getReaders() {
+        return readers;
+    }
+
+    public void addReader(User user) {
+        this.readers.add(user);
+    }
+
+    public List<User> getEditors() {
+        return editors;
+    }
+
+    public void addEditor(User user) {
+        this.editors.add(user);
+    }
+
+    public List<User> getModerators() {
+        return moderators;
+    }
+
+    public void addModerator(User user) {
+        this.moderators.add(user);
     }
 }

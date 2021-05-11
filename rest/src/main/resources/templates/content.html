@@ -14,6 +14,12 @@
 <body>
 
 <p>Return to <a href="/">Homepage</a></p>
+<h2><a href="/dir/content">File System</a></h2>
+<form th:action="@{/search(name=${name})}">
+  Filter: <input type="text" name="name" id="name" size="30" th:value="${name}"/>
+  <input type="submit" value="Search" />
+</form>
+
 <p>Create <a th:href="@{/dir/create(id=${param.id})}">Directory</a></p>
 <p>Create <a th:href="@{/doc/create(dir=${param.id})}">Document</a></p>
 <table>

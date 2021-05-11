@@ -4,6 +4,8 @@ import com.dms.dao.DocumentRepository;
 import com.dms.model.Document;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class DocumentServiceImpl implements DocumentService{
 
@@ -21,6 +23,11 @@ public class DocumentServiceImpl implements DocumentService{
     @Override
     public Document find(Long id) {
         return documentRepository.findById(id).get();
+    }
+
+    @Override
+    public List<Document> find(String name) {
+        return documentRepository.findByNameContains(name);
     }
 
     @Override

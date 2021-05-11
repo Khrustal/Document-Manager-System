@@ -20,15 +20,6 @@ public class User {
 
     private boolean admin;
 
-    @OneToMany
-    private List<Storable> reader;
-
-    @OneToMany
-    private List<Storable> editor;
-
-    @OneToMany
-    private List<Storable> moderator;
-
     public Long getId() {
         return id;
     }
@@ -63,29 +54,5 @@ public class User {
 
     public void setAdmin(boolean admin) {
         this.admin = admin;
-    }
-
-    public List<Storable> getReader() {
-        return reader;
-    }
-
-    public void addReader(Storable storable) {
-        this.reader.add(storable);
-    }
-
-    public List<Storable> getEditor() {
-        return editor;
-    }
-
-    public void addEditor(Storable storable) {
-        this.editor.add(storable);
-    }
-
-    public List<Storable> getModerator() {
-        return moderator;
-    }
-
-    public void addModerator(Storable storable) {
-        this.moderator.add(storable);
     }
 }

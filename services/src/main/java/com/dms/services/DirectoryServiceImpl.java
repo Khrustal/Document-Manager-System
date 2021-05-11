@@ -33,6 +33,11 @@ public class DirectoryServiceImpl implements DirectoryService{
     }
 
     @Override
+    public List<Directory> find(String name) {
+        return directoryRepository.findByNameContains(name);
+    }
+
+    @Override
     public List<Directory> findAll() {
         return directoryRepository.findAll();
     }

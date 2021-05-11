@@ -10,4 +10,6 @@ import java.util.List;
 public interface DocumentRepository extends JpaRepository<Document, Long> {
     List<Document> findByParentId(Long id);
     Document findByFilesId(Long id);
+    List<Document> findByName(String name);
+    List<Document> findByNameContains(String name);
 }

@@ -9,6 +9,7 @@ import java.util.Optional;
 public interface DirectoryService {
     public void create(Directory directory);
     public Optional<Directory> find(Long id);
+    public List<Directory> find(String name);
     public List<Directory> findAll();
     public List<Storable> getContent(Long id);
     public void update(Long id, Directory newDir);

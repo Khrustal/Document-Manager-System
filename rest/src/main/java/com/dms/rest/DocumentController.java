@@ -53,6 +53,9 @@ public class DocumentController {
                 dto.getFreeAccess(), Status.CURRENT, new Timestamp(System.currentTimeMillis()),
                 dto.getDescription(), dto.getPriority(), dto.getDocType(), null);
 
+        //Creator gets moderator right
+        document.addModerator(user);
+
         //doc == null => New Document, ancestor = this;
         //doc != null => Version od Document, ancestor = firstVersion
         Document ancestor = document;
