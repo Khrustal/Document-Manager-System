@@ -47,7 +47,7 @@ public class DirectoryServiceImpl implements DirectoryService{
     }
 
     @Override
-    public void update(Long id, Directory newDir) {
+    public void update(Long id, Directory newDir) { //ToDo Optimize methods in services
 
     }
 
@@ -58,6 +58,17 @@ public class DirectoryServiceImpl implements DirectoryService{
 
     @Override
     public void delete(Long id) {
+//        List<Directory> subDirs = directoryRepository.findByParentId(id);
+//        List<Document> subDocs = documentRepository.findByParentId(id);
+//
+//        for(Directory dir : subDirs) {
+//            directoryRepository.delete(dir);
+//        }
+//
+//        for(Document doc : subDocs) {
+//            documentRepository.delete(doc);
+//        }
 
+        directoryRepository.deleteById(id);
     }
 }

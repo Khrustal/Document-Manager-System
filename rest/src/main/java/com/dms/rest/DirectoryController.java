@@ -7,8 +7,6 @@ import com.dms.model.Type;
 import com.dms.model.User;
 import com.dms.services.DirectoryService;
 import com.dms.services.UserService;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
@@ -16,7 +14,6 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import java.sql.Timestamp;
-import java.util.Optional;
 
 @Controller
 @RequestMapping("/dir")
@@ -56,6 +53,12 @@ public class DirectoryController {
         model.addAttribute("contents", directoryService.getContent(id));
         model.addAttribute("type", Type.values());
         return "content";
+    }
+
+    @GetMapping("/delete")
+    public String delete(@RequestParam Long id, Model model) {
+        directoryService.delete(id);
+        return "home";
     }
 
 }

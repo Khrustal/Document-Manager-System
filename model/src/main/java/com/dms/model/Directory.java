@@ -1,7 +1,6 @@
 package com.dms.model;
 
 import javax.persistence.Entity;
-import javax.persistence.Table;
 import java.sql.Timestamp;
 
 @Entity
@@ -14,4 +13,5 @@ public class Directory extends Storable{
     public Directory() {
 
     }
+
 }

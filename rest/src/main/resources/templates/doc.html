@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Document</title>
+    <style>
+        table, td, th{
+            border: 1px solid black;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+<p>Return to <a href="/">Homepage</a></p>
+<table>
+    <thead>
+
+    </thead>
+
+    <tbody>
+        <tr>
+            <td>Name</td>
+            <td><span th:text="${document.getName()}"/></td>
+        </tr>
+        <tr>
+            <td>Author</td>
+            <td><span th:text="${document.getAuthor().getUsername()}"/></td>
+        </tr>
+        <tr>
+            <td>Description</td>
+            <td><span th:text="${document.getDescription()}"/></td>
+        </tr>
+        <tr>
+            <td>Priority</td>
+            <td><span th:text="${document.getPriority()}"/></td>
+        </tr>
+        <tr>
+            <td>Files</td>
+            <td><span th:text="${document.getFiles()}"/></td>
+        </tr>
+
+    </tbody>
+</table>
+
+
+
+
+
+</body>
+</html>

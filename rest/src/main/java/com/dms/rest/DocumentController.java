@@ -1,14 +1,11 @@
 package com.dms.rest;
 
-import com.dms.dto.CreateDirDto;
 import com.dms.dto.CreateDocDto;
 import com.dms.model.*;
 import com.dms.services.DirectoryService;
 import com.dms.services.DocTypeService;
 import com.dms.services.DocumentService;
 import com.dms.services.UserService;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
@@ -17,7 +14,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.sql.Timestamp;
 import java.util.List;
-import java.util.Optional;
 
 @Controller
 @RequestMapping("/doc")
@@ -57,14 +53,30 @@ public class DocumentController {
                 dto.getFreeAccess(), Status.CURRENT, new Timestamp(System.currentTimeMillis()),
                 dto.getDescription(), dto.getPriority(), dto.getDocType(), null);
 
-        //If ancestor == null => New Doc, ancestor = this, else => Version, ancestor = firstVersion
+        //doc == null => New Document, ancestor = this;
+        //doc != null => Version od Document, ancestor = firstVersion
         Document ancestor = document;
         if(doc != null) {
             Document prev = documentService.find(doc);
+            prev.setStatus(Status.OLD); //ToDo Change when implement moderation
+            documentService.create(prev); //update status
             ancestor = prev.getAncestor();
         }
         document.setAncestor(ancestor);
         documentService.create(document);
+        return "home";
+    }
+
+    @GetMapping("/view")
+    public String view(@RequestParam Long id, Model model) {
+        Document document = documentService.find(id);
+        model.addAttribute("document", document);
+        return "doc";
+    }
+
+    @GetMapping("/delete")
+    public String delete(@RequestParam Long id) {
+        documentService.delete(id);
         return "home";
     }
 }

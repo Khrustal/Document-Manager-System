@@ -26,10 +26,13 @@
     <th> Status </th>
     <th>  </th>
     <th>  </th>
+    <th>  </th>
   </tr>
   </thead>
   <tbody>
   <tr th:each="content : ${contents}">
+    <div th:switch="${content.status}">
+      <div th:case="${T(com.dms.model.Status).CURRENT}">
     <td><span th:text="${content.name}"> Title </span></td>
     <td><span th:text="${content.author.username}"> Title </span></td>
     <td><span th:text="${content.type}"> Title </span></td>
@@ -39,23 +42,35 @@
     <td>
       <div th:switch="${content.type}">
         <p th:case="${T(com.dms.model.Type).DOCUMENT}">
-          <a th:href="@{/doc/create(doc=${content.id}, dir=${param.id})}">Create version</a>
+          <a th:href="@{/doc/view(id=${content.id})}">View</a>
         </p>
         <p th:case="${T(com.dms.model.Type).DIRECTORY}">
           <a th:href="@{content(id=${content.id})}">View</a>
         </p>
       </div>
     </td>
+
     <td>
       <div th:switch="${content.type}">
         <p th:case="${T(com.dms.model.Type).DOCUMENT}">
           <a th:href="@{/doc/delete(id=${content.id})}">Delete</a>
         </p>
         <p th:case="${T(com.dms.model.Type).DIRECTORY}">
-          <a th:href="@{delete(id=${content.id})}">Delete</a>
+          <a th:href="@{/dir/delete(id=${content.id})}">Delete</a>
         </p>
       </div>
     </td>
+
+    <td>
+      <div th:switch="${content.type}">
+        <p th:case="${T(com.dms.model.Type).DOCUMENT}">
+          <a th:href="@{/doc/create(doc=${content.id}, dir=${param.id})}">Create version</a>
+        </p>
+      </div>
+    </td>
+
+      </div>
+    </div>
   </tr>
   </tbody>
 </table>
