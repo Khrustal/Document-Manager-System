@@ -56,12 +56,22 @@ public class DirectoryController {
 
         List<Storable> contents = directoryService.getContent(id);
 
+        //Check rights
         if(id != null) {
             Directory directory = directoryService.find(id).orElseThrow(RuntimeException::new);
+
             User user = userService.getCurrent();
+
             boolean reader = directory.getReaders().contains(user);
             boolean editor = directory.getEditors().contains(user);
             boolean moderator = directory.getModerators().contains(user);
+
+            //If no access return "Access denied"
+            if(!(reader || editor || moderator)) {
+                model.addAttribute("message", "Access denied");
+                return "info";
+            }
+
             model.addAttribute("reader", reader);
             model.addAttribute("editor", editor);
             model.addAttribute("moderator", moderator);

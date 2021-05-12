@@ -81,6 +81,13 @@ public class DocumentController {
         boolean reader = document.getReaders().contains(user);
         boolean editor = document.getEditors().contains(user);
         boolean moderator = document.getModerators().contains(user);
+
+        //If no access return "Access denied"
+        if(!(reader || editor || moderator)) {
+            model.addAttribute("message", "Access denied");
+            return "info";
+        }
+
         model.addAttribute("reader", reader);
         model.addAttribute("editor", editor);
         model.addAttribute("moderator", moderator);
