@@ -2,10 +2,13 @@ package com.dms.services;
 
 import com.dms.dao.StorableRepository;
 import com.dms.model.Storable;
+import com.dms.model.User;
 
 public interface StorableService {
 
     public void save(Storable storable);
     public Storable find(Long id);
+    public boolean canDelete(Long id, User user);
+    public boolean canEdit(Long id, User user);
 
 }

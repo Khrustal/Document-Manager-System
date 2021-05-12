@@ -11,5 +11,4 @@ public interface DocumentService {
     public List<Document> find(String name);
     public void delete(Long id);
     public Document fundByFileId(Long id);
-    public boolean canDelete(Long docId, User user);
 }

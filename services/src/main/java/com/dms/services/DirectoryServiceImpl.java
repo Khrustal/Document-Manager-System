@@ -53,11 +53,6 @@ public class DirectoryServiceImpl implements DirectoryService{
     }
 
     @Override
-    public void update(Long id, Directory newDir) { //ToDo Optimize methods in services
-
-    }
-
-    @Override
     public List<Storable> getContents(Long id) {
         return null;
     }
@@ -65,10 +60,5 @@ public class DirectoryServiceImpl implements DirectoryService{
     @Override
     public void delete(Long id) {
         directoryRepository.deleteById(id);
-    }
-
-    @Override
-    public boolean canDelete(Long dirId, User user) {
-        return find(dirId).orElseThrow(RuntimeException::new).getModerators().contains(user);
     }
 }

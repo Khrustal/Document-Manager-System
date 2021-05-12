@@ -13,8 +13,6 @@ public interface DirectoryService {
     public List<Directory> find(String name);
     public List<Directory> findAll();
     public List<Storable> getContent(Long id);
-    public void update(Long id, Directory newDir);
     public List<Storable> getContents(Long id);
     public void delete(Long id);
-    public boolean canDelete(Long dirId, User user);
 }

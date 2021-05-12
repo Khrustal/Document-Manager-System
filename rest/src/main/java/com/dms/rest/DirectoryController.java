@@ -3,9 +3,8 @@ package com.dms.rest;
 import com.dms.dto.CreateDirDto;
 import com.dms.model.*;
 import com.dms.services.DirectoryService;
+import com.dms.services.StorableService;
 import com.dms.services.UserService;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -19,14 +18,26 @@ public class DirectoryController {
 
     DirectoryService directoryService;
     UserService userService;
+    StorableService storableService;
 
-    public DirectoryController(DirectoryService directoryService, UserService userService) {
+    public DirectoryController(DirectoryService directoryService, UserService userService, StorableService storableService) {
         this.directoryService = directoryService;
         this.userService = userService;
+        this.storableService = storableService;
     }
 
     @GetMapping("/create")
     public String createForm(@RequestParam(required = false) Long id, Model model) {
+
+        //Check edit rights
+        if(id != null) {
+            User user = userService.getCurrent();
+            if (!storableService.canEdit(id, user)) {
+                model.addAttribute("message", "Access denied");
+                return "info";
+            }
+        }
+
         model.addAttribute("parentId", id);
         model.addAttribute("directory", new Directory());
         return "create_dir";
@@ -35,6 +46,15 @@ public class DirectoryController {
     @PostMapping("/create")
     public String create(@RequestParam(required = false) Long id, @ModelAttribute CreateDirDto dto, Model model) {
         User user = userService.getCurrent();
+
+        //Check edit rights
+        if(id != null) {
+            if (!storableService.canEdit(id, user)) {
+                model.addAttribute("message", "Access denied");
+                return "info";
+            }
+        }
+
         Directory parent = null;
         if(id != null) {
             parent = directoryService.find(id).orElseThrow(RuntimeException::new);
@@ -86,7 +106,10 @@ public class DirectoryController {
 
         //Check if dir is not empty
         if(!directoryService.getContent(id).isEmpty()) {
-            model.addAttribute("Directory is not empty");
+            model.addAttribute("message", "Directory is not empty");
+        }
+        else if(!storableService.canDelete(id, userService.getCurrent())) {
+            model.addAttribute("message", "Access denied");
         }
         else {
             directoryService.delete(id);

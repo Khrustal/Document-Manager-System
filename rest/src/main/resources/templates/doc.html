@@ -15,12 +15,12 @@
 
 <p>Return to <a href="/">Homepage</a></p>
 <div th:if="${moderator}">
-    <a th:href="@{/users/grant(right=moderator, id = ${param.id})}">Grant moderator rights</a>
-    <a th:href="@{/users/grant(right=editor, id = ${param.id})}">Grant editor rights</a>
-    <a th:href="@{/users/grant(right=reader, id = ${param.id})}">Grant reader rights</a>
+    <p>Add <a th:href="@{/users/grant(right=moderator, id = ${param.id})}">moderator</a></p>
+    <p>Add <a th:href="@{/users/grant(right=editor, id = ${param.id})}">editor</a></p>
+    <p>Add <a th:href="@{/users/grant(right=reader, id = ${param.id})}">reader</a></p>
 </div>
 <div th:if="${editor}">
-    <a th:href="@{/users/grant(right=reader, id = ${param.id})}">Grant reader rights</a>
+    <p>Add <a th:href="@{/users/grant(right=reader, id = ${param.id})}">reader</a></p>
 </div>
 <p>Create <a th:href="@{/file/create(id=${param.id})}">file</a></p>
 <h2>Document Info</h2>

@@ -42,9 +42,4 @@ public class DocumentServiceImpl implements DocumentService{
     public Document fundByFileId(Long id) {
         return documentRepository.findByFilesId(id);
     }
-
-    @Override
-    public boolean canDelete(Long docId, User user) {
-        return find(docId).getModerators().contains(user);
-    }
 }

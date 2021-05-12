@@ -2,10 +2,7 @@ package com.dms.rest;
 
 import com.dms.dto.CreateDocDto;
 import com.dms.model.*;
-import com.dms.services.DirectoryService;
-import com.dms.services.DocTypeService;
-import com.dms.services.DocumentService;
-import com.dms.services.UserService;
+import com.dms.services.*;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
@@ -23,17 +20,39 @@ public class DocumentController {
     DirectoryService directoryService;
     UserService userService;
     DocTypeService docTypeService;
+    StorableService storableService;
 
     public DocumentController(DocumentService documentService, DirectoryService directoryService,
-                              UserService userService, DocTypeService docTypeService) {
+                              UserService userService, DocTypeService docTypeService,
+                              StorableService storableService) {
         this.documentService = documentService;
         this.directoryService = directoryService;
         this.userService = userService;
         this.docTypeService = docTypeService;
+        this.storableService = storableService;
     }
 
     @GetMapping("/create")
-    public String createForm(Model model) {
+    public String createForm(@RequestParam(required = false) Long dir, @RequestParam(required = false) Long doc,
+                             Model model) {
+
+        User user = userService.getCurrent();
+
+        //Check edit rights
+        if(dir != null) {
+            if (!storableService.canEdit(dir, user)) {
+                model.addAttribute("message", "Access denied");
+                return "info";
+            }
+        }
+
+        if(doc != null) {
+            if (!storableService.canEdit(doc, user)) {
+                model.addAttribute("message", "Access denied");
+                return "info";
+            }
+        }
+
         model.addAttribute("document", new CreateDocDto());
         List<DocType> docTypeList = docTypeService.findAll();
         model.addAttribute("docTypes", docTypeList);
@@ -43,8 +62,24 @@ public class DocumentController {
     @PostMapping("/create")
     public String create(@RequestParam(required = false) Long dir, @RequestParam(required = false) Long doc,
                          @ModelAttribute CreateDocDto dto, Model model) {
-        UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        User user = userService.find(userDetails.getUsername()).get();
+
+        User user = userService.getCurrent();
+
+        //Check edit rights
+        if(dir != null) {
+            if (!storableService.canEdit(dir, user)) {
+                model.addAttribute("message", "Access denied");
+                return "info";
+            }
+        }
+
+        if(doc != null) {
+            if (!storableService.canEdit(doc, user)) {
+                model.addAttribute("message", "Access denied");
+                return "info";
+            }
+        }
+
         Directory parent = null;
         if(dir != null) {
             parent = directoryService.find(dir).get();
@@ -102,10 +137,13 @@ public class DocumentController {
 
         //ToDo version safety
 
-        documentService.delete(id);
-
-        model.addAttribute("message", "Document deleted");
-
+        if(!storableService.canDelete(id, userService.getCurrent())) {
+            model.addAttribute("message", "Access denied");
+        }
+        else {
+            documentService.delete(id);
+            model.addAttribute("message", "Document deleted");
+        }
         return "info";
     }
 }
