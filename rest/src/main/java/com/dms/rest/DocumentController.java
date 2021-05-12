@@ -99,6 +99,9 @@ public class DocumentController {
 
     @GetMapping("/delete")
     public String delete(@RequestParam Long id, Model model) {
+
+        //ToDo version safety
+
         documentService.delete(id);
 
         model.addAttribute("message", "Document deleted");

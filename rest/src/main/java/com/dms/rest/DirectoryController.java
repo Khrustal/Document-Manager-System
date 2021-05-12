@@ -83,9 +83,16 @@ public class DirectoryController {
 
     @GetMapping("/delete")
     public String delete(@RequestParam Long id, Model model) {
-        directoryService.delete(id);
 
-        model.addAttribute("message", "Directory deleted");
+        //Check if dir is not empty
+        if(!directoryService.getContent(id).isEmpty()) {
+            model.addAttribute("Directory is not empty");
+        }
+        else {
+            directoryService.delete(id);
+
+            model.addAttribute("message", "Directory deleted");
+        }
 
         return "info";
     }

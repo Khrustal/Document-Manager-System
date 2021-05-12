@@ -2,6 +2,7 @@ package com.dms.services;
 
 import com.dms.model.Directory;
 import com.dms.model.Storable;
+import com.dms.model.User;
 
 import java.util.List;
 import java.util.Optional;
@@ -15,4 +16,5 @@ public interface DirectoryService {
     public void update(Long id, Directory newDir);
     public List<Storable> getContents(Long id);
     public void delete(Long id);
+    public boolean canDelete(Long dirId, User user);
 }

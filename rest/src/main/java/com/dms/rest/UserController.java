@@ -26,6 +26,7 @@ public class UserController {
     public String grant(@RequestParam Long id, @RequestParam String right, Model model) {
         List<User> users = userService.findAll();
         //Remove current user
+        //ToDo remove users with access == right
         users.remove(userService.getCurrent());
         model.addAttribute("users", users);
         return "users";
@@ -48,7 +49,7 @@ public class UserController {
             message = "Granted " + right + " to " + user.getUsername();
         }
         else {
-            message = "Access Denied";
+            message = "Request can't be fulfilled";
         }
         model.addAttribute("message", message);
         return "info";

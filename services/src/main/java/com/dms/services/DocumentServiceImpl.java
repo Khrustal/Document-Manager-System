@@ -2,6 +2,7 @@ package com.dms.services;
 
 import com.dms.dao.DocumentRepository;
 import com.dms.model.Document;
+import com.dms.model.User;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -10,9 +11,11 @@ import java.util.List;
 public class DocumentServiceImpl implements DocumentService{
 
     DocumentRepository documentRepository;
+    UserService userService;
 
-    public DocumentServiceImpl(DocumentRepository documentRepository) {
+    public DocumentServiceImpl(DocumentRepository documentRepository, UserService userService) {
         this.documentRepository = documentRepository;
+        this.userService = userService;
     }
 
     @Override
@@ -31,10 +34,6 @@ public class DocumentServiceImpl implements DocumentService{
     }
 
     @Override
-    public void update(Long id, Document newDoc) {
-    }
-
-    @Override
     public void delete(Long id) {
         documentRepository.deleteById(id);
     }
@@ -42,5 +41,10 @@ public class DocumentServiceImpl implements DocumentService{
     @Override
     public Document fundByFileId(Long id) {
         return documentRepository.findByFilesId(id);
+    }
+
+    @Override
+    public boolean canDelete(Long docId, User user) {
+        return find(docId).getModerators().contains(user);
     }
 }

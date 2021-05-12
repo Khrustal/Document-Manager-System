@@ -5,6 +5,7 @@ import com.dms.dao.DocumentRepository;
 import com.dms.model.Directory;
 import com.dms.model.Document;
 import com.dms.model.Storable;
+import com.dms.model.User;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -63,17 +64,11 @@ public class DirectoryServiceImpl implements DirectoryService{
 
     @Override
     public void delete(Long id) {
-//        List<Directory> subDirs = directoryRepository.findByParentId(id);
-//        List<Document> subDocs = documentRepository.findByParentId(id);
-//
-//        for(Directory dir : subDirs) {
-//            directoryRepository.delete(dir);
-//        }
-//
-//        for(Document doc : subDocs) {
-//            documentRepository.delete(doc);
-//        }
-
         directoryRepository.deleteById(id);
+    }
+
+    @Override
+    public boolean canDelete(Long dirId, User user) {
+        return find(dirId).orElseThrow(RuntimeException::new).getModerators().contains(user);
     }
 }
