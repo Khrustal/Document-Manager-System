@@ -5,6 +5,7 @@ import com.dms.model.Document;
 import com.dms.model.Storable;
 import com.dms.services.DirectoryService;
 import com.dms.services.DocumentService;
+import org.springframework.boot.web.servlet.error.ErrorController;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
@@ -16,7 +17,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Controller
-public class BasicController {
+public class BasicController{
 
     DirectoryService directoryService;
     DocumentService documentService;
@@ -42,4 +43,5 @@ public class BasicController {
         model.addAttribute("contents", contents);
         return "content";
     }
+
 }

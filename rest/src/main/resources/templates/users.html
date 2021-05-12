@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Users</title>
+</head>
+<body>
+
+<p>Return to <a href="/">Homepage</a></p>
+
+<table>
+  <thead>
+  <tr>
+    <th> Username </th>
+    <th> Email </th>
+    <th> </th>
+
+  </tr>
+  </thead>
+  <tbody>
+  <tr th:each="user : ${users}">
+        <td><span th:text="${user.username}"> Title </span></td>
+        <td><span th:text="${user.email}"> Title </span></td>
+      <td>
+          <form method="POST" th:action="@{/users/grant(id=${param.id}, right=${param.right}, userId=${user.id})}">
+              <button type="submit" name="submit" value="value" class="link-button">Grant</button>
+          </form>
+      </td>
+  </tr>
+  </tbody>
+</table>
+
+</body>
+</html>

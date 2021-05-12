@@ -5,6 +5,7 @@ import com.dms.model.DocFile;
 import com.dms.model.Document;
 import com.dms.services.DocFileService;
 import com.dms.services.DocumentService;
+import org.dom4j.rule.Mode;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -37,17 +38,22 @@ public class DocFileController {
         document.addFile(file);
         documentService.create(document);
 
-        return "home";
+        model.addAttribute("message", "File created");
+
+        return "info";
     }
 
     @GetMapping("/delete")
-    public String delete(@RequestParam Long id) {
+    public String delete(@RequestParam Long id, Model model) {
         DocFile docFile = docFileService.find(id);
         Document document = documentService.fundByFileId(id);
         document.removeFile(docFile);
         documentService.create(document);
         docFileService.delete(docFile);
-        return "home";
+
+        model.addAttribute("message", "File deleted");
+
+        return "info";
     }
 
 

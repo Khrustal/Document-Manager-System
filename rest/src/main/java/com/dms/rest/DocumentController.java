@@ -67,20 +67,35 @@ public class DocumentController {
         }
         document.setAncestor(ancestor);
         documentService.create(document);
-        return "home";
+
+        model.addAttribute("message", "Document created");
+        return "info";
     }
 
     @GetMapping("/view")
     public String view(@RequestParam Long id, Model model) {
         Document document = documentService.find(id);
+
+        User user = userService.getCurrent();
+
+        boolean reader = document.getReaders().contains(user);
+        boolean editor = document.getEditors().contains(user);
+        boolean moderator = document.getModerators().contains(user);
+        model.addAttribute("reader", reader);
+        model.addAttribute("editor", editor);
+        model.addAttribute("moderator", moderator);
+
         model.addAttribute("document", document);
         model.addAttribute("files", document.getFiles());
         return "doc";
     }
 
     @GetMapping("/delete")
-    public String delete(@RequestParam Long id) {
+    public String delete(@RequestParam Long id, Model model) {
         documentService.delete(id);
-        return "home";
+
+        model.addAttribute("message", "Document deleted");
+
+        return "info";
     }
 }

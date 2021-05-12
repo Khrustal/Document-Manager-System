@@ -20,6 +20,15 @@
   <input type="submit" value="Search" />
 </form>
 
+<div th:if="${moderator}">
+  <a th:href="@{/users/grant(right=moderator, id = ${param.id})}">Grant moderator rights</a>
+  <a th:href="@{/users/grant(right=editor, id = ${param.id})}">Grant editor rights</a>
+  <a th:href="@{/users/grant(right=reader, id = ${param.id})}">Grant reader rights</a>
+</div>
+<div th:if="${editor}">
+  <a th:href="@{/users/grant(right=reader, id = ${param.id})}">Grant reader rights</a>
+</div>
+
 <p>Create <a th:href="@{/dir/create(id=${param.id})}">Directory</a></p>
 <p>Create <a th:href="@{/doc/create(dir=${param.id})}">Document</a></p>
 <table>

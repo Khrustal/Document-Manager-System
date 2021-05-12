@@ -3,6 +3,8 @@ package com.dms.services;
 import com.dms.dao.UserRepository;
 import com.dms.model.Storable;
 import com.dms.model.User;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -12,9 +14,11 @@ import java.util.Optional;
 public class UserServiceImpl implements UserService{
 
     UserRepository userRepository;
+    StorableService storableService;
 
-    public UserServiceImpl(UserRepository userRepository) {
+    public UserServiceImpl(UserRepository userRepository, StorableService storableService) {
         this.userRepository = userRepository;
+        this.storableService = storableService;
     }
 
     @Override
@@ -28,22 +32,42 @@ public class UserServiceImpl implements UserService{
     }
 
     @Override
-    public Boolean checkReader(Long userId, Long storableId) {
-        return null;
-    }
-
-    @Override
-    public Boolean checkEditor(Long userId, Long storableId) {
-        return null;
-    }
-
-    @Override
-    public Boolean checkModerator(Long userId, Long storableId) {
-        return null;
-    }
-
-    @Override
     public List<Storable> getModerationList(Long id) {
         return null;
+    }
+
+    @Override
+    public User getCurrent() {
+        UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        return userRepository.findUserByUsername(userDetails.getUsername()).orElseThrow(RuntimeException::new);
+    }
+
+    @Override
+    public List<User> findAll() {
+        return userRepository.findAll();
+    }
+
+    @Override
+    public boolean checkGrant(Storable storable, User user, String right) {
+        User current = getCurrent();
+        boolean canGrant = false;
+
+        //Check if current can grant
+        if(right.equals("moderator") || right.equals("editor")) {
+            canGrant = storable.getModerators().contains(current);
+        }
+        else if(right.equals("reader")) {
+            canGrant = storable.getEditors().contains(current) || storable.getModerators().contains(current);
+        }
+
+        //Check user rights
+        //moderator -> error
+        //editor and already editor -> error
+        //reader and already reader -> error
+        boolean wrongRightAssigment = storable.getModerators().contains(user) ||
+                (right.equals("editor") && storable.getEditors().contains(user)) ||
+                (right.equals("reader") && storable.getReaders().contains(user));
+
+        return (canGrant && !wrongRightAssigment);
     }
 }

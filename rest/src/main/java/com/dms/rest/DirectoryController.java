@@ -1,10 +1,7 @@
 package com.dms.rest;
 
 import com.dms.dto.CreateDirDto;
-import com.dms.model.Directory;
-import com.dms.model.Status;
-import com.dms.model.Type;
-import com.dms.model.User;
+import com.dms.model.*;
 import com.dms.services.DirectoryService;
 import com.dms.services.UserService;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -14,6 +11,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import java.sql.Timestamp;
+import java.util.List;
 
 @Controller
 @RequestMapping("/dir")
@@ -36,21 +34,39 @@ public class DirectoryController {
 
     @PostMapping("/create")
     public String create(@RequestParam(required = false) Long id, @ModelAttribute CreateDirDto dto, Model model) {
-        UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        User user = userService.find(userDetails.getUsername()).get();
+        User user = userService.getCurrent();
         Directory parent = null;
         if(id != null) {
-            parent = directoryService.find(id).get();
+            parent = directoryService.find(id).orElseThrow(RuntimeException::new);
         }
+
         Directory directory = new Directory(null, parent, user, dto.getName(), Type.DIRECTORY,
                 dto.getFreeAccess(), Status.CURRENT, new Timestamp(System.currentTimeMillis()));
+
+        directory.addModerator(user);
+
         directoryService.create(directory);
-        return "home";
+
+        model.addAttribute("message", "Directory created");
+        return "info";
     }
 
     @GetMapping("/content")
     public String getContent(@RequestParam(required = false) Long id , Model model) {
-        model.addAttribute("contents", directoryService.getContent(id));
+
+        List<Storable> contents = directoryService.getContent(id);
+
+        if(id != null) {
+            Directory directory = directoryService.find(id).orElseThrow(RuntimeException::new);
+            User user = userService.getCurrent();
+            boolean reader = directory.getReaders().contains(user);
+            boolean editor = directory.getEditors().contains(user);
+            boolean moderator = directory.getModerators().contains(user);
+            model.addAttribute("reader", reader);
+            model.addAttribute("editor", editor);
+            model.addAttribute("moderator", moderator);
+        }
+        model.addAttribute("contents", contents);
         model.addAttribute("type", Type.values());
         return "content";
     }
@@ -58,7 +74,10 @@ public class DirectoryController {
     @GetMapping("/delete")
     public String delete(@RequestParam Long id, Model model) {
         directoryService.delete(id);
-        return "home";
+
+        model.addAttribute("message", "Directory deleted");
+
+        return "info";
     }
 
 }

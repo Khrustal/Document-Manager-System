@@ -1,37 +1,57 @@
 package com.dms.rest;
 
-import com.dms.dao.UserRepository;
+import com.dms.model.Storable;
 import com.dms.model.User;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import com.dms.services.StorableService;
+import com.dms.services.UserService;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Optional;
 
-@RestController
+@Controller
 @RequestMapping("/users")
 public class UserController {
 
-    UserRepository userRepository;
+    UserService userService;
+    StorableService storableService;
 
-    public UserController(UserRepository userRepository) {
-        this.userRepository = userRepository;
+    public UserController(UserService userService, StorableService storableService) {
+        this.userService = userService;
+        this.storableService = storableService;
     }
 
-    @PostMapping("/create")
-    public ResponseEntity<?> createUser(@RequestBody User user) {
-        userRepository.save(user);
-        return new ResponseEntity<>(HttpStatus.OK);
+    @GetMapping("/grant")
+    public String grant(@RequestParam Long id, @RequestParam String right, Model model) {
+        List<User> users = userService.findAll();
+        //Remove current user
+        users.remove(userService.getCurrent());
+        model.addAttribute("users", users);
+        return "users";
     }
 
-    @GetMapping("/get-all")
-    public List<User> findAll() {
-        return userRepository.findAll();
+    @PostMapping("/grant")
+    public String grant(@RequestParam Long id, @RequestParam String right, @RequestParam Long userId, Model model) {
+        String message;
+        User user = userService.find(userId).orElseThrow(RuntimeException::new);
+        Storable storable = storableService.find(id);
+
+        //Check access
+        if(userService.checkGrant(storable, user, right)) {
+            switch (right) {
+                case "moderator" -> storable.addModerator(user);
+                case "editor" -> storable.addEditor(user);
+                case "reader" -> storable.addReader(user);
+            }
+            storableService.save(storable);
+            message = "Granted " + right + " to " + user.getUsername();
+        }
+        else {
+            message = "Access Denied";
+        }
+        model.addAttribute("message", message);
+        return "info";
     }
 
-    @GetMapping("/get")
-    public Optional<User> findById(@RequestParam Long id) {
-        return userRepository.findById(id);
-    }
 }
