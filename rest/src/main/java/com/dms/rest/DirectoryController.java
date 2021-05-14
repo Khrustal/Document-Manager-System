@@ -32,7 +32,7 @@ public class DirectoryController {
         //Check edit rights
         if(id != null) {
             User user = userService.getCurrent();
-            if (!storableService.canEdit(id, user)) {
+            if (!storableService.canEdit(id, user) && !storableService.isFreeAccess(id)) {
                 model.addAttribute("message", "Access denied");
                 return "info";
             }
@@ -49,7 +49,8 @@ public class DirectoryController {
 
         //Check edit rights
         if(id != null) {
-            if (!storableService.canEdit(id, user)) {
+            Storable storable = storableService.find(id);
+            if (!storableService.canEdit(id, user) && !storable.getFreeAccess()) {
                 model.addAttribute("message", "Access denied");
                 return "info";
             }
@@ -102,7 +103,7 @@ public class DirectoryController {
             boolean moderator = directory.getModerators().contains(user);
 
             //If no access return "Access denied"
-            if(!(reader || editor || moderator)) {
+            if(!(reader || editor || moderator) && !directory.getFreeAccess()) {
                 model.addAttribute("message", "Access denied");
                 return "info";
             }
@@ -123,7 +124,7 @@ public class DirectoryController {
         if(!directoryService.getContent(id).isEmpty()) {
             model.addAttribute("message", "Directory is not empty");
         }
-        else if(!storableService.canDelete(id, userService.getCurrent())) {
+        else if(!storableService.canDelete(id, userService.getCurrent()) && !storableService.isFreeAccess(id)) {
             model.addAttribute("message", "Access denied");
         }
         else {

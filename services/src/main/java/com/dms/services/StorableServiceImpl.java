@@ -43,4 +43,9 @@ public class StorableServiceImpl implements StorableService{
     public List<Storable> getModerationList(User user) {
         return repo.findByStatusAndModeratorsContaining(Status.ON_MODERATION, user);
     }
+
+    @Override
+    public boolean isFreeAccess(Long id) {
+        return find(id).getFreeAccess();
+    }
 }

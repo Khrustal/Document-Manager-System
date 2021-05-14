@@ -13,4 +13,5 @@ public interface StorableService {
     public boolean canDelete(Long id, User user);
     public boolean canEdit(Long id, User user);
     public List<Storable> getModerationList(User user);
+    public boolean isFreeAccess(Long id);
 }

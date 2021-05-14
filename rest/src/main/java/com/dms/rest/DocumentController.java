@@ -37,22 +37,22 @@ public class DocumentController {
         User user = userService.getCurrent();
 
         //ToDo check isFreeAccess and isAdmin
+        if(!storableService.isFreeAccess(dir) && !storableService.isFreeAccess(doc)) {
+            //Check edit rights
+            if (dir != null) {
+                if (!storableService.canEdit(dir, user)) {
+                    model.addAttribute("message", "Access denied");
+                    return "info";
+                }
+            }
 
-        //Check edit rights
-        if(dir != null) {
-            if (!storableService.canEdit(dir, user)) {
-                model.addAttribute("message", "Access denied");
-                return "info";
+            if (doc != null) {
+                if (!storableService.canEdit(doc, user)) {
+                    model.addAttribute("message", "Access denied");
+                    return "info";
+                }
             }
         }
-
-        if(doc != null) {
-            if (!storableService.canEdit(doc, user)) {
-                model.addAttribute("message", "Access denied");
-                return "info";
-            }
-        }
-
         model.addAttribute("document", new CreateDocDto());
         List<DocType> docTypeList = docTypeService.findAll();
         model.addAttribute("docTypes", docTypeList);
@@ -66,7 +66,7 @@ public class DocumentController {
         User user = userService.getCurrent();
 
         if(doc != null) {
-            if (!storableService.canEdit(doc, user)) {
+            if (!storableService.canEdit(doc, user) && !storableService.isFreeAccess(doc)) {
                 model.addAttribute("message", "Access denied");
                 return "info";
             }
@@ -86,7 +86,7 @@ public class DocumentController {
         Status status = Status.CURRENT;
 
         if(dir != null) {
-            if (!storableService.canEdit(dir, user)) {
+            if (!storableService.canEdit(dir, user) && !storableService.isFreeAccess(dir)) {
                 model.addAttribute("message", "Access denied");
                 return "info";
             }
@@ -142,7 +142,7 @@ public class DocumentController {
         boolean moderator = document.getModerators().contains(user);
 
         //If no access return "Access denied"
-        if(!(reader || editor || moderator)) {
+        if(!(reader || editor || moderator) && !storableService.isFreeAccess(id)) {
             model.addAttribute("message", "Access denied");
             return "info";
         }
@@ -161,7 +161,7 @@ public class DocumentController {
 
         //ToDo version safety
 
-        if(!storableService.canDelete(id, userService.getCurrent())) {
+        if(!storableService.canDelete(id, userService.getCurrent()) && !storableService.isFreeAccess(id)) {
             model.addAttribute("message", "Access denied");
         }
         else {
