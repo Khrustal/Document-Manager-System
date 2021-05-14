@@ -31,5 +31,10 @@ public class DocTypeServiceImpl implements DocTypeService{
         return docTypeRepository.findAll();
     }
 
+    @Override
+    public void delete(Long id) {
+        docTypeRepository.deleteById(id);
+    }
+
 
 }

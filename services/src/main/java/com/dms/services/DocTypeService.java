@@ -9,4 +9,5 @@ public interface DocTypeService {
     public void create(DocType docType);
     public DocType find(Long id);
     public List<DocType> findAll();
+    public void delete(Long id);
 }

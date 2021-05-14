@@ -12,6 +12,13 @@ public class DocType {
     @Column(unique = true)
     private String name;
 
+    public DocType(String name) {
+        this.name = name;
+    }
+
+    public DocType() {
+    }
+
     public Long getId() {
         return id;
     }

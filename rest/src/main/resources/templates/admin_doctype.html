@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>DocType</title>
+</head>
+<body>
+
+<p>Return to <a href="/admin">Homepage</a></p>
+
+<form method="POST" th:action="@{/admin/doctype/create(name=${name})}">
+    <input type="text" name="name" id="name" th:value="${name}"/>
+    <button type="submit">Add doctype</button>
+</form>
+
+<table>
+  <thead>
+  <tr>
+    <th> Name </th>
+    <th> </th>
+  </tr>
+  </thead>
+  <tbody>
+  <tr th:each="content : ${contents}">
+        <td><span th:text="${content.getId()}"> Title </span></td>
+        <td><span th:text="${content.getName()}"> Title </span></td>
+
+        <td>
+            <form method="POST" th:action="@{/admin/doctype/delete(id=${content.id})}">
+                <button type="submit" name="submit" value="value" class="link-button">Delete</button>
+            </form>
+        </td>
+
+  </tr>
+  </tbody>
+</table>
+
+</body>
+</html>
