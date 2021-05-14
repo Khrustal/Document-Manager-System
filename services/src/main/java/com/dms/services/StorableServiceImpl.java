@@ -1,6 +1,7 @@
 package com.dms.services;
 
 import com.dms.dao.StorableRepository;
+import com.dms.model.Status;
 import com.dms.model.Storable;
 import com.dms.model.User;
 import org.springframework.stereotype.Service;
@@ -36,5 +37,10 @@ public class StorableServiceImpl implements StorableService{
     public boolean canEdit(Long id, User user) {
         Storable storable = find(id);
         return (storable.getModerators().contains(user) || storable.getEditors().contains(user));
+    }
+
+    @Override
+    public List<Storable> getModerationList(User user) {
+        return repo.findByStatusAndModeratorsContaining(Status.ON_MODERATION, user);
     }
 }

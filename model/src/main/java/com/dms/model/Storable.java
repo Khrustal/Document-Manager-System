@@ -76,6 +76,10 @@ public class Storable {
         this.author = author;
     }
 
+    public void setType(Type type) {
+        this.type = type;
+    }
+
     public String getName() {
         return name;
     }
@@ -120,6 +124,10 @@ public class Storable {
         this.readers.add(user);
     }
 
+    public void addReaders(List<User> user) {
+        this.readers.addAll(user);
+    }
+
     public List<User> getEditors() {
         return editors;
     }
@@ -128,11 +136,19 @@ public class Storable {
         this.editors.add(user);
     }
 
+    public void addEditors(List<User> user) {
+        this.editors.addAll(user);
+    }
+
     public List<User> getModerators() {
         return moderators;
     }
 
     public void addModerator(User user) {
         this.moderators.add(user);
+    }
+
+    public void addModerators(List<User> user) {
+        this.moderators.addAll(user);
     }
 }

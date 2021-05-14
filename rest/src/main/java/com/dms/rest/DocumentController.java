@@ -3,8 +3,6 @@ package com.dms.rest;
 import com.dms.dto.CreateDocDto;
 import com.dms.model.*;
 import com.dms.services.*;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -38,6 +36,8 @@ public class DocumentController {
 
         User user = userService.getCurrent();
 
+        //ToDo check isFreeAccess and isAdmin
+
         //Check edit rights
         if(dir != null) {
             if (!storableService.canEdit(dir, user)) {
@@ -65,27 +65,41 @@ public class DocumentController {
 
         User user = userService.getCurrent();
 
-        //Check edit rights
-        if(dir != null) {
-            if (!storableService.canEdit(dir, user)) {
-                model.addAttribute("message", "Access denied");
-                return "info";
-            }
-        }
-
         if(doc != null) {
             if (!storableService.canEdit(doc, user)) {
                 model.addAttribute("message", "Access denied");
                 return "info";
             }
+
+            Document prev = documentService.find(doc);
+
+            //Check if doc on moderation
+            if(documentService.findModerated(prev.getAncestor()).isPresent()) {
+                model.addAttribute("message", "Document is currently on moderation");
+                return "info";
+            }
+
         }
 
         Directory parent = null;
+
+        Status status = Status.CURRENT;
+
         if(dir != null) {
-            parent = directoryService.find(dir).get();
+            if (!storableService.canEdit(dir, user)) {
+                model.addAttribute("message", "Access denied");
+                return "info";
+            }
+            parent = directoryService.find(dir).orElseThrow(RuntimeException::new);
+
+            if(parent.getEditors().contains(user)) {
+                status = Status.ON_MODERATION;
+            }
         }
+
+
         Document document = new Document(null, parent, user, dto.getName(), Type.DOCUMENT,
-                dto.getFreeAccess(), Status.CURRENT, new Timestamp(System.currentTimeMillis()),
+                dto.getFreeAccess(), status, new Timestamp(System.currentTimeMillis()),
                 dto.getDescription(), dto.getPriority(), dto.getDocType(), null);
 
         //Creator gets moderator right
@@ -96,11 +110,21 @@ public class DocumentController {
         Document ancestor = document;
         if(doc != null) {
             Document prev = documentService.find(doc);
-            prev.setStatus(Status.OLD); //ToDo Change when implement moderation
-            documentService.create(prev); //update status
+
+            if(prev.getEditors().contains(user)) {
+                status = Status.ON_MODERATION;
+            }
+
+            document.addModerators(prev.getModerators());
+            document.addEditors(prev.getEditors());
+            document.addReaders(prev.getReaders());
+
+            document.setStatus(status);
+
             ancestor = prev.getAncestor();
         }
         document.setAncestor(ancestor);
+
         documentService.create(document);
 
         model.addAttribute("message", "Document created");

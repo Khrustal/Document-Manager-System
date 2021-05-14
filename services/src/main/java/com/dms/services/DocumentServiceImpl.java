@@ -2,10 +2,11 @@ package com.dms.services;
 
 import com.dms.dao.DocumentRepository;
 import com.dms.model.Document;
-import com.dms.model.User;
+import com.dms.model.Status;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class DocumentServiceImpl implements DocumentService{
@@ -41,5 +42,15 @@ public class DocumentServiceImpl implements DocumentService{
     @Override
     public Document fundByFileId(Long id) {
         return documentRepository.findByFilesId(id);
+    }
+
+    @Override
+    public Optional<Document> findModerated(Document ancestor) {
+        return documentRepository.findByStatusAndAncestor(Status.ON_MODERATION, ancestor);
+    }
+
+    @Override
+    public Optional<Document> findPrevModerated(Document document) {
+        return documentRepository.findByStatusAndAncestor(Status.CURRENT, document.getAncestor());
     }
 }

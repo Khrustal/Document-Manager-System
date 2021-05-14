@@ -32,11 +32,6 @@ public class UserServiceImpl implements UserService{
     }
 
     @Override
-    public List<Storable> getModerationList(Long id) {
-        return null;
-    }
-
-    @Override
     public User getCurrent() {
         UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         return userRepository.findUserByUsername(userDetails.getUsername()).orElseThrow(RuntimeException::new);

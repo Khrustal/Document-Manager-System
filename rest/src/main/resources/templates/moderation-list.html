@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Moderation List</title>
+    <style>
+        table, td, th{
+            border: 1px solid black;
+            width: 1200px;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+<p>Return to <a href="/">Homepage</a></p>
+
+<table>
+    <thead>
+    <tr>
+        <th> Name </th>
+        <th> Author </th>
+        <th> Type </th>
+        <th> Created </th>
+        <th> Status </th>
+        <th>  </th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="content : ${contents}">
+                <td><span th:text="${content.name}"> Title </span></td>
+                <td><span th:text="${content.author.username}"> Title </span></td>
+                <td><span th:text="${content.type}"> Title </span></td>
+                <td><span th:text="${#dates.format(content.creationDT, 'dd-MMM-yyyy HH:mm')}"> Title </span></td>
+                <td><span th:text="${content.status}"> Title </span></td>
+
+                <td>
+                    <a th:href="@{/users/moderation(id=${content.id})}">View</a>
+                </td>
+    </tr>
+    </tbody>
+</table>
+
+</body>
+</html>

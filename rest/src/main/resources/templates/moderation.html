@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Moderation</title>
+</head>
+<body>
+
+<p>Return to <a href="/">Homepage</a></p>
+
+<form method="post" th:action="@{/users/moderation(id=${content.getId()}, value=true)}">
+    <input type="submit" value="Accept" />
+</form>
+<form method="post" th:action="@{/users/moderation(id=${content.getId()}, value=false)}">
+    <input type="submit" value="Decline" />
+</form>
+
+<div th:switch="${content.getType()}">
+    <div th:case="${T(com.dms.model.Type).DIRECTORY}">
+
+        <table>
+            <tbody>
+            <tr>
+                <td>Name</td>
+                <td><span th:text="${content.getName()}"/></td>
+            </tr>
+            <tr>
+                <td>Author</td>
+                <td><span th:text="${content.getAuthor().getUsername()}"/></td>
+            </tr>
+            <tr>
+                <td>Email</td>
+                <td><span th:text="${content.getAuthor().getEmail()}"/></td>
+            </tr>
+
+            </tbody>
+        </table>
+
+    </div>
+    <div th:case="${T(com.dms.model.Type).DOCUMENT}">
+
+        <table>
+            <tbody>
+            <tr>
+                <td>Name</td>
+                <td><span th:text="${content.getName()}"/></td>
+            </tr>
+            <tr>
+                <td>Author</td>
+                <td><span th:text="${content.getAuthor().getUsername()}"/></td>
+            </tr>
+            <tr>
+                <td>Email</td>
+                <td><span th:text="${content.getAuthor().getEmail()}"/></td>
+            </tr>
+            <tr>
+                <td>Description</td>
+                <td><span th:text="${content.getDescription()}"/></td>
+            </tr>
+            <tr>
+                <td>Priority</td>
+                <td><span th:text="${content.getPriority()}"/></td>
+            </tr>
+
+            </tbody>
+        </table>
+
+        <h2>Files</h2>
+        <table>
+            <thead>
+            <tr>
+                <td>Name</td>
+                <td>Type</td>
+                <td>Path</td>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="file : ${files}">
+                <td><span th:text="${file.name}"> Title </span></td>
+                <td><span th:text="${file.type}"> Title </span></td>
+                <td><span th:text="${file.path}"> Title </span></td>
+            </tr>
+            </tbody>
+        </table>
+
+    </div>
+</div>
+
+</body>
+</html>

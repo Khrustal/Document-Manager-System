@@ -56,14 +56,27 @@ public class DirectoryController {
         }
 
         Directory parent = null;
+        Status status = Status.CURRENT;
+
         if(id != null) {
             parent = directoryService.find(id).orElseThrow(RuntimeException::new);
+            if(parent.getEditors().contains(user)) {
+                status = Status.ON_MODERATION;
+            }
         }
 
         Directory directory = new Directory(null, parent, user, dto.getName(), Type.DIRECTORY,
-                dto.getFreeAccess(), Status.CURRENT, new Timestamp(System.currentTimeMillis()));
+                dto.getFreeAccess(), status, new Timestamp(System.currentTimeMillis()));
 
-        directory.addModerator(user);
+        if(parent == null) {
+            directory.addModerator(user);
+        }
+        else {
+            directory.addModerators(directory.getParent().getModerators());
+            directory.addEditors(directory.getParent().getEditors());
+            directory.addReaders(directory.getParent().getReaders());
+        }
+
 
         directoryService.create(directory);
 
@@ -73,6 +86,8 @@ public class DirectoryController {
 
     @GetMapping("/content")
     public String getContent(@RequestParam(required = false) Long id , Model model) {
+
+        //ToDo check isFreeAccess and isAdmin
 
         List<Storable> contents = directoryService.getContent(id);
 
