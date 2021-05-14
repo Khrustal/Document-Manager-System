@@ -16,6 +16,7 @@
 <p><a href="/logout">Logout</a></p>
 <p><a href="/dir/content">File system</a></p>
 <p><a href="/users/moderation">Moderation List</a></p>
+<p th:if="${user.isAdmin()}"><a href="/admin/users">Admin actions</a></p>
 
 </body>
 </html>

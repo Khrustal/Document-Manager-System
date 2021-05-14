@@ -3,11 +3,11 @@ package com.dms.rest;
 import com.dms.model.Directory;
 import com.dms.model.Document;
 import com.dms.model.Storable;
+import com.dms.model.User;
 import com.dms.services.DirectoryService;
 import com.dms.services.DocumentService;
-import org.springframework.boot.web.servlet.error.ErrorController;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
+import com.dms.services.UserService;
+import com.dms.services.mappers.UserDtoMapper;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -21,16 +21,18 @@ public class BasicController{
 
     DirectoryService directoryService;
     DocumentService documentService;
+    UserService userService;
 
-    public BasicController(DirectoryService directoryService, DocumentService documentService) {
+    public BasicController(DirectoryService directoryService, DocumentService documentService, UserService userService) {
         this.directoryService = directoryService;
         this.documentService = documentService;
+        this.userService = userService;
     }
 
     @GetMapping("/")
     public String home(Model model){
-        UserDetails user = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        model.addAttribute("message", user.getUsername());
+        User user = userService.getCurrent();
+        model.addAttribute("user", UserDtoMapper.map(user));
         return "home";
     }
 

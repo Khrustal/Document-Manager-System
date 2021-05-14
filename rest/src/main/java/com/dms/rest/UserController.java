@@ -1,6 +1,7 @@
 package com.dms.rest;
 
 import com.dms.dto.DocumentDto;
+import com.dms.dto.UserDto;
 import com.dms.model.*;
 import com.dms.services.DirectoryService;
 import com.dms.services.DocumentService;
@@ -8,12 +9,15 @@ import com.dms.services.StorableService;
 import com.dms.services.UserService;
 import com.dms.services.mappers.DirectoryDtoMapper;
 import com.dms.services.mappers.DocumentDtoMapper;
+import com.dms.services.mappers.UserDtoMapper;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Controller
 @RequestMapping("/users")
@@ -38,7 +42,10 @@ public class UserController {
         //Remove current user
         //ToDo remove users with access == right
         users.remove(userService.getCurrent());
-        model.addAttribute("users", users);
+
+        List<UserDto> dtos = users.stream().map(UserDtoMapper::map).collect(Collectors.toList());
+
+        model.addAttribute("users", dtos);
         return "users";
     }
 

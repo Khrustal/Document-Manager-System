@@ -18,7 +18,8 @@ public class User {
     @Column(unique = true)
     private String email;
 
-    private boolean admin;
+    @Enumerated(EnumType.STRING)
+    private Role role;
 
     public Long getId() {
         return id;
@@ -49,10 +50,6 @@ public class User {
     }
 
     public boolean isAdmin() {
-        return admin;
-    }
-
-    public void setAdmin(boolean admin) {
-        this.admin = admin;
+        return role.equals(Role.ADMIN);
     }
 }
