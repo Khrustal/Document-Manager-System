@@ -6,7 +6,7 @@
 </head>
 <body>
 
-<p>Return to <a href="/admin">Homepage</a></p>
+<p>Return to <a href="/admin/">Homepage</a></p>
 
 <form method="POST" th:action="@{/admin/doctype/create(name=${name})}">
     <input type="text" name="name" id="name" th:value="${name}"/>
@@ -16,13 +16,14 @@
 <table>
   <thead>
   <tr>
+    <th> </th>
     <th> Name </th>
     <th> </th>
   </tr>
   </thead>
   <tbody>
   <tr th:each="content : ${contents}">
-        <td><span th:text="${content.getId()}"> Title </span></td>
+        <td><span> * </span></td>
         <td><span th:text="${content.getName()}"> Title </span></td>
 
         <td>

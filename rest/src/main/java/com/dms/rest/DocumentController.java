@@ -36,13 +36,11 @@ public class DocumentController {
 
         User user = userService.getCurrent();
 
-        if(!storableService.isFreeAccess(dir) && !storableService.isFreeAccess(doc)) {
+        if(dir != null && !storableService.isFreeAccess(dir) && !storableService.isFreeAccess(doc)) {
             //Check edit rights
-            if (dir != null) {
-                if (!storableService.canEdit(dir, user)) {
-                    model.addAttribute("message", "Access denied");
-                    return "info";
-                }
+            if (!storableService.canEdit(dir, user)) {
+                model.addAttribute("message", "Access denied");
+                return "info";
             }
 
             if (doc != null) {
@@ -112,6 +110,10 @@ public class DocumentController {
 
             if(prev.getEditors().contains(user)) {
                 status = Status.ON_MODERATION;
+            }
+            else {
+                prev.setStatus(Status.OLD);
+                documentService.create(prev);
             }
 
             document.addModerators(prev.getModerators());
