@@ -88,8 +88,6 @@ public class DirectoryController {
     @GetMapping("/content")
     public String getContent(@RequestParam(required = false) Long id , Model model) {
 
-        //ToDo check isFreeAccess and isAdmin
-
         List<Storable> contents = directoryService.getContent(id);
 
         //Check rights

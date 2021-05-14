@@ -36,7 +36,6 @@ public class DocumentController {
 
         User user = userService.getCurrent();
 
-        //ToDo check isFreeAccess and isAdmin
         if(!storableService.isFreeAccess(dir) && !storableService.isFreeAccess(doc)) {
             //Check edit rights
             if (dir != null) {
@@ -159,14 +158,24 @@ public class DocumentController {
     @GetMapping("/delete")
     public String delete(@RequestParam Long id, Model model) {
 
-        //ToDo version safety
-
         if(!storableService.canDelete(id, userService.getCurrent()) && !storableService.isFreeAccess(id)) {
             model.addAttribute("message", "Access denied");
         }
         else {
-            documentService.delete(id);
-            model.addAttribute("message", "Document deleted");
+            Document document = documentService.find(id);
+            if(document.equals(document.getAncestor())) {
+                //If initial doc and other versions exists
+                if(!documentService.findByAncestor(document).isEmpty()) {
+                    model.addAttribute("message", "Can't delete initial version before others exist");
+                }
+            }
+            //If deleting current version and others exist -> make previous current
+            else if (document.getStatus().equals(Status.CURRENT)) {
+                Document prev = documentService.findLatestOld(document).orElseThrow(RuntimeException::new);
+                prev.setStatus(Status.CURRENT);
+                documentService.delete(id);
+                model.addAttribute("message", "Document deleted");
+            }
         }
         return "info";
     }

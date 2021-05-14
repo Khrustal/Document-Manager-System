@@ -13,4 +13,6 @@ public interface DocumentService {
     public Document fundByFileId(Long id);
     public Optional<Document> findModerated(Document ancestor);
     public Optional<Document> findPrevModerated(Document document);
+    public Optional<Document> findLatestOld(Document document);
+    public List<Document> findByAncestor(Document document);
 }

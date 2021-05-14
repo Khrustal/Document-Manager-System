@@ -16,4 +16,6 @@ public interface DocumentRepository extends JpaRepository<Document, Long> {
     List<Document> findByName(String name);
     List<Document> findByNameContains(String name);
     Optional<Document> findByStatusAndAncestor(Status status, Document document);
+    List<Document> findByStatus(Status status);
+    List<Document> findByAncestor(Document document);
 }
