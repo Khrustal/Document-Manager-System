@@ -143,7 +143,7 @@ public class DocumentController {
         boolean moderator = document.getModerators().contains(user);
 
         //If no access return "Access denied"
-        if(!(reader || editor || moderator) && !storableService.isFreeAccess(id)) {
+        if(!(reader || editor || moderator) && !storableService.isFreeAccess(id) && !user.isAdmin()) {
             model.addAttribute("message", "Access denied");
             return "info";
         }
@@ -160,15 +160,23 @@ public class DocumentController {
     @GetMapping("/delete")
     public String delete(@RequestParam Long id, Model model) {
 
-        if(!storableService.canDelete(id, userService.getCurrent()) && !storableService.isFreeAccess(id)) {
+        User current = userService.getCurrent();
+
+        if(!storableService.canDelete(id, current) && !storableService.isFreeAccess(id) && !current.isAdmin()) {
             model.addAttribute("message", "Access denied");
         }
         else {
             Document document = documentService.find(id);
             if(document.equals(document.getAncestor())) {
                 //If initial doc and other versions exists
-                if(!documentService.findByAncestor(document).isEmpty()) {
+                List<Document> versions = documentService.findByAncestor(document);
+                versions.remove(document);
+                if(!versions.isEmpty()) {
                     model.addAttribute("message", "Can't delete initial version before others exist");
+                }
+                else {
+                    documentService.delete(id);
+                    model.addAttribute("message", "Document deleted");
                 }
             }
             //If deleting current version and others exist -> make previous current

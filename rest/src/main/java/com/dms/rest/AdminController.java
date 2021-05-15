@@ -1,8 +1,10 @@
 package com.dms.rest;
 
-import com.dms.model.DocFile;
-import com.dms.model.DocType;
+import com.dms.model.*;
+import com.dms.services.DirectoryService;
 import com.dms.services.DocTypeService;
+import com.dms.services.DocumentService;
+import com.dms.services.StorableService;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -11,15 +13,23 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import java.util.List;
+
 @Controller
 @RequestMapping("/admin")
 @PreAuthorize("hasAuthority('ADMIN')")
 public class AdminController {
 
     DocTypeService docTypeService;
+    DirectoryService directoryService;
+    DocumentService documentService;
+    StorableService storableService;
 
-    public AdminController(DocTypeService docTypeService) {
+    public AdminController(DocTypeService docTypeService, DirectoryService directoryService, DocumentService documentService, StorableService storableService) {
         this.docTypeService = docTypeService;
+        this.directoryService = directoryService;
+        this.documentService = documentService;
+        this.storableService = storableService;
     }
 
     @GetMapping("/")
