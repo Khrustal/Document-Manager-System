@@ -2,9 +2,7 @@ package com.dms.rest;
 
 import com.dms.dto.CreateDirDto;
 import com.dms.model.*;
-import com.dms.services.DirectoryService;
-import com.dms.services.StorableService;
-import com.dms.services.UserService;
+import com.dms.services.*;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -19,11 +17,17 @@ public class DirectoryController {
     DirectoryService directoryService;
     UserService userService;
     StorableService storableService;
+    MailSenderService mailSenderService;
+    MailConfigService mailConfigService;
 
-    public DirectoryController(DirectoryService directoryService, UserService userService, StorableService storableService) {
+    public DirectoryController(DirectoryService directoryService, UserService userService,
+                               StorableService storableService, MailSenderService mailSenderService,
+                               MailConfigService mailConfigService) {
         this.directoryService = directoryService;
         this.userService = userService;
         this.storableService = storableService;
+        this.mailSenderService = mailSenderService;
+        this.mailConfigService = mailConfigService;
     }
 
     @GetMapping("/create")
@@ -118,6 +122,9 @@ public class DirectoryController {
     @GetMapping("/delete")
     public String delete(@RequestParam Long id, Model model) {
 
+        Storable storable = storableService.find(id);
+        User author = storable.getAuthor();
+
         //Check if dir is not empty
         if(!directoryService.getContent(id).isEmpty()) {
             model.addAttribute("message", "Directory is not empty");
@@ -131,7 +138,10 @@ public class DirectoryController {
 
             model.addAttribute("message", "Directory deleted");
         }
-
+        if(mailConfigService.getMailStatus()) {
+            mailSenderService.send(author,
+                "Your directory " + storable.getName() + " deleted");
+        }
         return "info";
     }
 

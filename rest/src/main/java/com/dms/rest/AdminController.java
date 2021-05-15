@@ -1,10 +1,8 @@
 package com.dms.rest;
 
 import com.dms.model.*;
-import com.dms.services.DirectoryService;
-import com.dms.services.DocTypeService;
-import com.dms.services.DocumentService;
-import com.dms.services.StorableService;
+import com.dms.services.*;
+import org.dom4j.rule.Mode;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -24,17 +22,34 @@ public class AdminController {
     DirectoryService directoryService;
     DocumentService documentService;
     StorableService storableService;
+    MailConfigService mailConfigService;
 
-    public AdminController(DocTypeService docTypeService, DirectoryService directoryService, DocumentService documentService, StorableService storableService) {
+    public AdminController(DocTypeService docTypeService, DirectoryService directoryService,
+                           DocumentService documentService, StorableService storableService,
+                           MailConfigService mailConfigService) {
         this.docTypeService = docTypeService;
         this.directoryService = directoryService;
         this.documentService = documentService;
         this.storableService = storableService;
+        this.mailConfigService = mailConfigService;
     }
 
     @GetMapping("/")
-    public String home() {
+    public String home(Model model) {
+        model.addAttribute("status", mailConfigService.getMailStatus());
         return "admin_home";
+    }
+
+    @PostMapping("/mail")
+    public String changeMailStatus(@RequestParam boolean status, Model model) {
+        if (status) {
+            mailConfigService.enableMail();
+            model.addAttribute("message", "Mail enabled");
+        } else {
+            mailConfigService.disableMail();
+            model.addAttribute("message", "Mail disabled");
+        }
+        return "info";
     }
 
     @GetMapping("/doctype")

@@ -1,20 +1,17 @@
 package com.dms.rest;
 
-import com.dms.dto.DocumentDto;
 import com.dms.dto.UserDto;
 import com.dms.model.*;
-import com.dms.services.DirectoryService;
-import com.dms.services.DocumentService;
-import com.dms.services.StorableService;
-import com.dms.services.UserService;
+import com.dms.services.*;
 import com.dms.services.mappers.DirectoryDtoMapper;
-import com.dms.services.mappers.DocumentDtoMapper;
 import com.dms.services.mappers.UserDtoMapper;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
-import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -27,13 +24,18 @@ public class UserController {
     StorableService storableService;
     DirectoryService directoryService;
     DocumentService documentService;
+    MailSenderService mailSenderService;
+    MailConfigService mailConfigService;
 
     public UserController(UserService userService, StorableService storableService,
-                          DirectoryService directoryService, DocumentService documentService) {
+                          DirectoryService directoryService, DocumentService documentService,
+                          MailSenderService mailSenderService, MailConfigService mailConfigService) {
         this.userService = userService;
         this.storableService = storableService;
         this.directoryService = directoryService;
         this.documentService = documentService;
+        this.mailSenderService = mailSenderService;
+        this.mailConfigService = mailConfigService;
     }
 
     @GetMapping("/grant")
@@ -102,6 +104,8 @@ public class UserController {
     public String moderate(@RequestParam Long id, @RequestParam Boolean value, Model model) {
 
         Storable storable = storableService.find(id);
+        User author = storable.getAuthor();
+
 
         if(storable.getModerators().contains(userService.getCurrent())) {
             if(value) {
@@ -111,16 +115,29 @@ public class UserController {
                     prev.ifPresent(document -> document.setStatus(Status.OLD));
                 }
                 storable.setStatus(Status.CURRENT);
+                //Creator becomes moderator
+                storable.addModerator(storable.getAuthor());
                 model.addAttribute("message", "Accepted " + storable.getName());
                 storableService.save(storable);
+                if(mailConfigService.getMailStatus()) {
+                    mailSenderService.send(author,
+                            "Your " + storable.getType().toString().toLowerCase() + " " +
+                                    storable.getName() + " accepted");
+                }
             }
             else {
                 //Version declined -> delete version
-                if(storable.getType().equals(Type.DIRECTORY)) {
-                    directoryService.delete(id);
-                }
-                else {
-                    documentService.delete(id);
+                Document prev = documentService.findLatestOld((Document) storable).orElseThrow(RuntimeException::new);
+                prev.setStatus(Status.CURRENT);
+                documentService.create(prev);
+
+                model.addAttribute("message", "Declined " + storable.getName());
+
+                documentService.delete(id);
+                if(mailConfigService.getMailStatus()) {
+                    mailSenderService.send(author,
+                            "Your " + storable.getType().toString().toLowerCase() + " " +
+                                    storable.getName() + " declined");
                 }
             }
         }

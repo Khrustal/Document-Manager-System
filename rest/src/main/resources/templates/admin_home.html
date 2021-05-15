@@ -8,9 +8,24 @@
 
 <h2>Administrator home page</h2>
 
-<p>Return to <a href="/">Homepage</a></p>
-<p><a href="/admin/content">File system</a></p>
 <p><a href="/admin/doctype">DocTypes</a></p>
+
+<p>Return to <a href="/">Homepage</a></p>
+
+<div th:switch="${status}">
+    <div th:case=true>
+        <p>Mail status: enabled</p>
+        <form method="post" th:action="@{/admin/mail(status=false)}">
+            <input type="submit" value="Disable" />
+        </form>
+    </div>
+    <div th:case=false>
+        <p>Mail status: disabled</p>
+        <form method="post" th:action="@{/admin/mail(status=true)}">
+            <input type="submit" value="Enable" />
+        </form>
+    </div>
+</div>
 
 </body>
 </html>

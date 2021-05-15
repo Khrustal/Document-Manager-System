@@ -3,6 +3,7 @@ package com.dms.rest;
 import com.dms.dto.CreateDocDto;
 import com.dms.model.*;
 import com.dms.services.*;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -19,15 +20,19 @@ public class DocumentController {
     UserService userService;
     DocTypeService docTypeService;
     StorableService storableService;
+    MailSenderService mailSenderService;
+    MailConfigService mailConfigService;
 
     public DocumentController(DocumentService documentService, DirectoryService directoryService,
-                              UserService userService, DocTypeService docTypeService,
-                              StorableService storableService) {
+                              UserService userService, DocTypeService docTypeService, StorableService storableService,
+                              MailSenderService mailSenderService, MailConfigService mailConfigService) {
         this.documentService = documentService;
         this.directoryService = directoryService;
         this.userService = userService;
         this.docTypeService = docTypeService;
         this.storableService = storableService;
+        this.mailSenderService = mailSenderService;
+        this.mailConfigService = mailConfigService;
     }
 
     @GetMapping("/create")
@@ -36,7 +41,7 @@ public class DocumentController {
 
         User user = userService.getCurrent();
 
-        if(dir != null && !storableService.isFreeAccess(dir) && !storableService.isFreeAccess(doc)) {
+        if(dir != null && !storableService.canEdit(dir, user) && !storableService.isFreeAccess(dir)) {
             //Check edit rights
             if (!storableService.canEdit(dir, user)) {
                 model.addAttribute("message", "Access denied");
@@ -100,7 +105,10 @@ public class DocumentController {
                 dto.getDescription(), dto.getPriority(), dto.getDocType(), null);
 
         //Creator gets moderator right
-        document.addModerator(user);
+        //document.addModerator(user);
+        if (parent != null) {
+            document.addModerators(parent.getModerators());
+        }
 
         //doc == null => New Document, ancestor = this;
         //doc != null => Version od Document, ancestor = firstVersion
@@ -161,6 +169,8 @@ public class DocumentController {
     public String delete(@RequestParam Long id, Model model) {
 
         User current = userService.getCurrent();
+        Storable storable = storableService.find(id);
+        User author = storable.getAuthor();
 
         if(!storableService.canDelete(id, current) && !storableService.isFreeAccess(id) && !current.isAdmin()) {
             model.addAttribute("message", "Access denied");
@@ -183,9 +193,14 @@ public class DocumentController {
             else if (document.getStatus().equals(Status.CURRENT)) {
                 Document prev = documentService.findLatestOld(document).orElseThrow(RuntimeException::new);
                 prev.setStatus(Status.CURRENT);
+                documentService.create(prev);
                 documentService.delete(id);
                 model.addAttribute("message", "Document deleted");
             }
+        }
+        if(mailConfigService.getMailStatus()) {
+            mailSenderService.send(author,
+                    "Your document " + storable.getName() + " deleted");
         }
         return "info";
     }
