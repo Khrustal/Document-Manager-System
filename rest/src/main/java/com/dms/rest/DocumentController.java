@@ -103,14 +103,16 @@ public class DocumentController {
                 dto.getFreeAccess(), status, new Timestamp(System.currentTimeMillis()),
                 dto.getDescription(), dto.getPriority(), dto.getDocType(), null);
 
-        //Creator gets moderator right
-        //document.addModerator(user);
+        //Document gets moderators from directory
         if (parent != null) {
             document.addModerators(parent.getModerators());
+            if(parent.getFreeAccess()) {
+                document.addModerator(user);
+            }
         }
 
         //doc == null => New Document, ancestor = this;
-        //doc != null => Version od Document, ancestor = firstVersion
+        //doc != null => Version of Document, ancestor = firstVersion
         Document ancestor = document;
         if(doc != null) {
             Document prev = documentService.find(doc);
