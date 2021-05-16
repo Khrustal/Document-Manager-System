@@ -3,7 +3,6 @@ package com.dms.rest;
 import com.dms.dto.CreateDocDto;
 import com.dms.model.*;
 import com.dms.services.*;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -41,7 +40,7 @@ public class DocumentController {
 
         User user = userService.getCurrent();
 
-        if(dir != null && !storableService.canEdit(dir, user) && !storableService.isFreeAccess(dir)) {
+        if(dir != null && !storableService.canEdit(dir, user) && !storableService.isFreeAccess(dir) && !user.isAdmin()) {
             //Check edit rights
             if (!storableService.canEdit(dir, user)) {
                 model.addAttribute("message", "Access denied");
@@ -68,7 +67,7 @@ public class DocumentController {
         User user = userService.getCurrent();
 
         if(doc != null) {
-            if (!storableService.canEdit(doc, user) && !storableService.isFreeAccess(doc)) {
+            if (!storableService.canEdit(doc, user) && !storableService.isFreeAccess(doc) && !user.isAdmin()) {
                 model.addAttribute("message", "Access denied");
                 return "info";
             }
@@ -88,7 +87,7 @@ public class DocumentController {
         Status status = Status.CURRENT;
 
         if(dir != null) {
-            if (!storableService.canEdit(dir, user) && !storableService.isFreeAccess(dir)) {
+            if (!storableService.canEdit(dir, user) && !storableService.isFreeAccess(dir) && !user.isAdmin()) {
                 model.addAttribute("message", "Access denied");
                 return "info";
             }
