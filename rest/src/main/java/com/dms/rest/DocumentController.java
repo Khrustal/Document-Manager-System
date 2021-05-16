@@ -93,7 +93,13 @@ public class DocumentController {
             }
             parent = directoryService.find(dir).orElseThrow(RuntimeException::new);
 
-            if(parent.getEditors().contains(user)) {
+            if(doc != null) {
+                Document prev = documentService.find(doc);
+                if(prev.getEditors().contains(user)) {
+                    status = Status.ON_MODERATION;
+                }
+            }
+            else if(parent.getEditors().contains(user)) {
                 status = Status.ON_MODERATION;
             }
         }

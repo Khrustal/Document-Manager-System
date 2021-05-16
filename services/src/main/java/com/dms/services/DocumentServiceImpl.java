@@ -59,7 +59,7 @@ public class DocumentServiceImpl implements DocumentService{
     @Override
     public Optional<Document> findLatestOld(Document document) {
         List<Document> documents = documentRepository.findByStatus(Status.OLD);
-        documents.sort(Comparator.comparing(Storable::getCreationDT));
+        documents.sort(Comparator.comparing(Storable::getCreationDT).reversed());
 
         Optional<Document> result = Optional.empty();
 

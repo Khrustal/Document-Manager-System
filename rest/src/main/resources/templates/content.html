@@ -39,6 +39,7 @@
     <th> Type </th>
     <th> Created </th>
     <th> Status </th>
+    <th> Public </th>
     <th>  </th>
     <th>  </th>
     <th>  </th>
@@ -53,6 +54,7 @@
     <td><span th:text="${content.type}"> Title </span></td>
     <td><span th:text="${#dates.format(content.creationDT, 'dd-MMM-yyyy HH:mm')}"> Title </span></td>
     <td><span th:text="${content.status}"> Title </span></td>
+    <td><span th:text="${content.freeAccess}"> Title </span></td>
 
     <td>
       <div th:switch="${content.type}">
